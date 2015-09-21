@@ -1,0 +1,35 @@
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+    <modelVersion>4.0.0</modelVersion>
+    <groupId>org.netarchivesuite</groupId>
+    <artifactId>heritrix3-scripts</artifactId>
+    <version>1.0</version>
+
+    <properties>
+        <jdk-version>1.8</jdk-version>
+        <source-encoding>UTF-8</source-encoding>
+    </properties>
+
+    <dependencies>
+        <dependency>
+            <artifactId>je</artifactId>
+            <groupId>com.sleepycat</groupId>
+            <version>4.1.6</version>
+        </dependency>
+    </dependencies>
+
+    <build>
+        <plugins>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-compiler-plugin</artifactId>
+                <configuration>
+                    <source>${jdk-version}</source>
+                    <target>${jdk-version}</target>
+                    <encoding>${source-encoding}</encoding>
+                </configuration>
+            </plugin>
+        </plugins>
+    </build>
+
+</project>
