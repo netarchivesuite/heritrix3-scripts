@@ -7,6 +7,7 @@ import com.sleepycat.je.OperationStatus;
 
 void killToeThread(int thread) {
     job.crawlController.requestCrawlPause();
+    //TODO actually this should be "true" to get a new thread, but "false" makes it easier to test
     job.crawlController.killThread(thread, false);
     job.crawlController.requestCrawlResume();
 }
