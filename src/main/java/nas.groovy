@@ -45,4 +45,5 @@ void viewCrawlLog(String regex) {
         }
         htmlOut.println '</pre>'
     }
+    htmlOut.println '<p>'+ k + " matching urls found </p>"
 }

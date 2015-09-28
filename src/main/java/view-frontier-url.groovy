@@ -12,6 +12,8 @@ def regexStr = '.*dns.*'
 def delete = false
 
 if(delete == true) {
+	//Note that the first parameter to this call, "queueRegex", is undocumented in the heritrix javadoc
+	//The second parameter is just a regex of urls to be deleted.
 	count = job.crawlController.frontier.deleteURIs(".*", regexStr)
 	rawOut.println count + " uris deleted from frontier"
 	return
@@ -41,4 +43,4 @@ while (cursor.getNext(key, value, null) == OperationStatus.SUCCESS && count < nb
 cursor.close();
  
 htmlOut.println('</pre>');
-htmlOut.println '<p>'+count + " pending urls listed</p>"
+htmlOut.println '<p>' + count + " pending urls listed</p>"

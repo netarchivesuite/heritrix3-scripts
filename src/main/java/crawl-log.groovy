@@ -56,3 +56,4 @@ else {
 }
 
 htmlOut.println('</pre>');
+htmlOut.println '<p>'+i + " found urls </p>"
