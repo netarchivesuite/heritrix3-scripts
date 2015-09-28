@@ -1,9 +1,15 @@
+//killToeThread(1)
 //listFrontier('.*')
-viewCrawlLog('.*')
+//viewCrawlLog('.*')
 
 import com.sleepycat.je.DatabaseEntry;
 import com.sleepycat.je.OperationStatus;
 
+void killToeThread(int thread) {
+    job.crawlController.requestCrawlPause();
+    job.crawlController.killThread(thread, false);
+    job.crawlController.requestCrawlResume();
+}
 
 void listFrontier(String regex) {
     style = 'overflow: auto; word-wrap: normal; white-space: pre; width:1200px; height:500px'
