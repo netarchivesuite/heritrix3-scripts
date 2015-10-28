@@ -2,10 +2,12 @@
 logfilePrefix = "scripting_events"   // A logfile will be created with this prefix + ".log"
 initials = "ABC"   // Curator initials to be added to log-messages
 
-//killToeThread(1)
-//listFrontier('.*')
-//deleteFromFrontier('.*')
-//viewCrawlLog('.*')
+// To use, just remove the initial "//" from any one of these lines.
+//
+//killToeThread(1)       //Kill a toe thread by number
+//listFrontier('.*')     //List uris in the frontier matching a given regexp
+//deleteFromFrontier('.*')    //Remove uris matching a given regexp from the frontier
+//viewCrawlLog('.*')          //View already crawled lines uris matching a given regexp
 
 import com.sleepycat.je.DatabaseEntry;
 import com.sleepycat.je.OperationStatus;
