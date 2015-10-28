@@ -1,5 +1,9 @@
+logfilePrefix = "scripting_events"
+initials = "ABC"
+
 //killToeThread(1)
 //listFrontier('.*')
+//deleteFromFrontier('.*')
 //viewCrawlLog('.*')
 
 import com.sleepycat.je.DatabaseEntry;
@@ -9,7 +13,23 @@ void killToeThread(int thread) {
     job.crawlController.requestCrawlPause();
     //TODO actually this should be "true" to get a new thread, but "false" makes it easier to test
     job.crawlController.killThread(thread, false);
+    logEvent("Killed Toe Thread number " + thread + ".")
     job.crawlController.requestCrawlResume();
+}
+
+
+void logEvent(String e) {
+    logger = job.crawlController.loggerModule.setupSimpleLog(logfilePrefix);
+    logger.info("Action from user " + initials + ": " +e)
+}
+
+void deleteFromFrontier(String regex) {
+    job.crawlController.requestCrawlPause()
+    count = job.crawlController.frontier.deleteURIs(".*", regex)
+    job.crawlController.requestCrawlResume();
+    logEvent("Deleted " + count + " uris matching regex '" + regex + "'")
+    rawOut.println count + " uris deleted from frontier."
+    rawOut.println("This action has been logged in " + logfilePrefix + ".log")
 }
 
 void listFrontier(String regex) {

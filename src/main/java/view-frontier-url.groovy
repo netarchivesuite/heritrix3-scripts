@@ -15,6 +15,7 @@ if(delete == true) {
 	//Note that the first parameter to this call, "queueRegex", is undocumented in the heritrix javadoc
 	//The second parameter is just a regex of urls to be deleted.
 	count = job.crawlController.frontier.deleteURIs(".*", regexStr)
+	job.crawlController.loggerModule.setupSimpleLog("frontierlog").info("Deleted " + count + " uris matching regex '" + regexStr + "'")
 	rawOut.println count + " uris deleted from frontier"
 	return
 }
