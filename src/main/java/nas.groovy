@@ -1,5 +1,6 @@
-logfilePrefix = "scripting_events"
-initials = "ABC"
+
+logfilePrefix = "scripting_events"   // A logfile will be created with this prefix + ".log"
+initials = "ABC"   // Curator initials to be added to log-messages
 
 //killToeThread(1)
 //listFrontier('.*')
