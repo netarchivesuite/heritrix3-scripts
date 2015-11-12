@@ -17,7 +17,8 @@ void killToeThread(int thread) {
     //TODO actually this should be "true" to get a new thread, but "false" makes it easier to test
     job.crawlController.killThread(thread, false);
     logEvent("Killed Toe Thread number " + thread + ".")
-    job.crawlController.requestCrawlResume();
+    rawOut.println "WARNING: This job and heritrix may now need to be manually terminated when it is finished harvesting."
+    rawOut.println "REMINDER: This job is now in a Paused state."
 }
 
 
@@ -29,7 +30,7 @@ void logEvent(String e) {
 void deleteFromFrontier(String regex) {
     job.crawlController.requestCrawlPause()
     count = job.crawlController.frontier.deleteURIs(".*", regex)
-    job.crawlController.requestCrawlResume();
+    rawOut.println "REMINDER: This job is now in a Paused state."
     logEvent("Deleted " + count + " uris matching regex '" + regex + "'")
     rawOut.println count + " uris deleted from frontier."
     rawOut.println("This action has been logged in " + logfilePrefix + ".log")
