@@ -10,7 +10,10 @@ initials = "ABC"   // Curator initials to be added to log-messages
 //viewCrawlLog('.*')          //View already crawled lines uris matching a given regexp
 
 import com.sleepycat.je.DatabaseEntry;
-import com.sleepycat.je.OperationStatus;
+import com.sleepycat.je.OperationStatus
+
+import java.util.logging.FileHandler
+import java.util.logging.Logger;
 
 void killToeThread(int thread) {
     job.crawlController.requestCrawlPause();
@@ -20,10 +23,22 @@ void killToeThread(int thread) {
     job.crawlController.requestCrawlResume();
 }
 
+/**
+ * Utility method to find and return the logger for a given log-prefix, or initialise it
+ * if it doesn't already exist.
+ * @return
+ */
+Logger getLogger() {
+    for (Map.Entry<Logger,FileHandler> entry: job.crawlController.loggerModule.fileHandlers ) {
+        if (entry.key.name.contains(logfilePrefix)) {
+            return entry.key
+        }
+    }
+    return job.crawlController.loggerModule.setupSimpleLog(logfilePrefix);
+}
 
 void logEvent(String e) {
-    logger = job.crawlController.loggerModule.setupSimpleLog(logfilePrefix);
-    logger.info("Action from user " + initials + ": " +e)
+    getLogger().info("Action from user " + initials + ": " +e)
 }
 
 void deleteFromFrontier(String regex) {
