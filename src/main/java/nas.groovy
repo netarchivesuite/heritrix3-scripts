@@ -7,11 +7,14 @@ initials = "ABC"   // Curator initials to be added to log-messages
 //killToeThread(1)       //Kill a toe thread by number
 //listFrontier('.*')     //List uris in the frontier matching a given regexp
 //deleteFromFrontier('.*')    //Remove uris matching a given regexp from the frontier
-//viewCrawlLog('.*')          //View already crawled lines uris matching a given regexp
+//printCrawlLog('.*')          //View already crawled lines uris matching a given regexp
 
 import com.sleepycat.je.DatabaseEntry;
 import com.sleepycat.je.OperationStatus
 
+import java.nio.file.Files
+import java.util.function.Consumer
+import java.util.function.Predicate
 import java.util.logging.FileHandler
 import java.util.logging.Logger;
 
@@ -72,23 +75,28 @@ void listFrontier(String regex) {
     htmlOut.println '</pre>'
 }
 
-void viewCrawlLog(String regex) {
+class patternMatchingPredicate implements Predicate<String>
+    {
+        private java.util.regex.Pattern p;
+        public patternMatchingPredicate(java.util.regex.Pattern p) {this.p=p;}
+        boolean test(String s) {return s.matches(p);}
+    }
+
+
+class PrintConsumer implements Consumer<String>
+{
+    private PrintWriter out;
+    public PrintConsumer(PrintWriter out){this.out=out;}
+    void accept(String s) {out.println("<span style=\"font-size:small\">" + s + "</span>");}
+}
+
+
+void printCrawlLog(String regex) {
     style = 'overflow: auto; word-wrap: normal; white-space: pre; width:1200px; height:500px'
     htmlOut.println '<pre style="' + style +'">'
-
+    namePredicate = new patternMatchingPredicate(~regex);
     crawlLogFile = job.crawlController.frontier.loggerModule.crawlLogPath.file
-    lines = crawlLogFile.readLines()
-    count = lines.size()
-    k = 0
-    crawlLogFile.withReader { reader ->
-        while (k < count) {
-            if (lines[k] =~ regex) {
-                htmlOut.println '<span style="font-size:small;">'+lines[k]+'</span>'
-                //rawOut.println lines[k]
-            }
-            k++
-        }
-        htmlOut.println '</pre>'
-    }
-    htmlOut.println '<p>'+ k + " matching urls found </p>"
+    matchingCount =  Files.lines(crawlLogFile.toPath()).filter(namePredicate).peek(new PrintConsumer(htmlOut)).count()
+    htmlOut.println '</pre>'
+    htmlOut.println '<p>'+ matchingCount + " matching urls found </p>"
 }
