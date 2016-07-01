@@ -4,10 +4,10 @@ initials = "ABC"   // Curator initials to be added to log-messages
 
 // To use, just remove the initial "//" from any one of these lines.
 //
-//killToeThread(1)       //Kill a toe thread by number
-//listFrontier('.*')     //List uris in the frontier matching a given regexp
-//deleteFromFrontier('.*')    //Remove uris matching a given regexp from the frontier
-//printCrawlLog('.*')          //View already crawled lines uris matching a given regexp
+//killToeThread  1       //Kill a toe thread by number
+//listFrontier '.*stats.*'    //List uris in the frontier matching a given regexp
+//deleteFromFrontier '.*foobar.*'    //Remove uris matching a given regexp from the frontier
+//printCrawlLog '.*'          //View already crawled lines uris matching a given regexp
 
 import com.sleepycat.je.DatabaseEntry;
 import com.sleepycat.je.OperationStatus
@@ -56,23 +56,30 @@ void deleteFromFrontier(String regex) {
 void listFrontier(String regex) {
     style = 'overflow: auto; word-wrap: normal; white-space: pre; width:1200px; height:500px'
     htmlOut.println '<pre style="' + style +'">'
-
+    pattern = ~regex
+    //type  org.archive.crawler.frontier.BdbMultipleWorkQueues
     pendingUris = job.crawlController.frontier.pendingUris
+    //iterates over the raw underlying instance of com.sleepycat.je.Database
     cursor = pendingUris.pendingUrisDB.openCursor(null, null);
     key = new DatabaseEntry();
     value = new DatabaseEntry();
-
-    while (cursor.getNext(key, value, null) == OperationStatus.SUCCESS) {
-        if (value.getData().length == 0) {
-            continue;
+    matchingCount = 0
+    try {
+        while (cursor.getNext(key, value, null) == OperationStatus.SUCCESS) {
+            if (value.getData().length == 0) {
+                continue;
+            }
+            curi = pendingUris.crawlUriBinding.entryToObject(value);
+            if (pattern.matcher(curi.toString())) {
+                htmlOut.println '<span style="font-size:small;">' + curi + '</span>'
+                matchingCount++
+            }
         }
-        curi = pendingUris.crawlUriBinding.entryToObject(value);
-        if (curi =~ regex) {
-            htmlOut.println '<span style="font-size:small;">'+curi+'</span>'
-        }
+    } finally {
+        cursor.close();
     }
-    cursor.close();
     htmlOut.println '</pre>'
+    htmlOut.println '<p>'+ matchingCount + " matching uris found </p>"
 }
 
 class patternMatchingPredicate implements Predicate<String>
@@ -98,5 +105,5 @@ void printCrawlLog(String regex) {
     crawlLogFile = job.crawlController.frontier.loggerModule.crawlLogPath.file
     matchingCount =  Files.lines(crawlLogFile.toPath()).filter(namePredicate).peek(new PrintConsumer(htmlOut)).count()
     htmlOut.println '</pre>'
-    htmlOut.println '<p>'+ matchingCount + " matching urls found </p>"
+    htmlOut.println '<p>'+ matchingCount + " matching lines found </p>"
 }
